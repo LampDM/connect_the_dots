@@ -18,23 +18,23 @@ for ln in gen:
     else:
         b.append((int(ind), flx, float(y)))
 
+class Point:
+    def __init__(self, xarg, yarg):
+        self.x = xarg
+        self.y = yarg
 
-def lines_intersect(p1, p2, p3, p4, q1, q2, q3, q4):
-    # u = (q − p) × r / (r × s)
-    # If r × s = 0 and (q − p) × r = 0, then the two lines are collinear.
-    # https://stackoverflow.com/questions/563198/how-do-you-detect-where-two-line-segments-intersect
-    r1 = p2-p1
-    r2 = p4-p3
-    s1 = q2-q1
-    s2 = q4-q3
+def ccw(A,B,C):
+    return (C.y-A.y) * (B.x-A.x) > (B.y-A.y) * (C.x-A.x)
 
-    # r dot s
-    rs = r1 * r2 + s1 * s2
-    print(rs)
-    qminp = (q1 - p1) * r1 + (q2 - p2) * r2
-    return not rs == 0 and qminp == 0
+def intersect(A,B,C,D):
+    return ccw(A,C,D) != ccw(B,C,D) and ccw(A,B,C) != ccw(A,B,D)
 
-print(lines_intersect(1,2,5,4,2,2,2,9))
+# Write more tests
+print(intersect(Point(1,2),Point(5,4),Point(2,2),Point(2,9)))
+print(intersect(Point(0,0),Point(0,10),Point(-3,-3),Point(2,2)))
+print(intersect(Point(0,0),Point(0,10),Point(5,1),Point(5,55)))
+
+
 
 print(a)
 print(b)
