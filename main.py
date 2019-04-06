@@ -1,5 +1,7 @@
 import sys
+import time
 
+start = time. time()
 
 class Point:
 
@@ -26,13 +28,14 @@ for ln in gen:
     else:
         b.append(Point(int(ln[0]), flx, float(ln[2].replace("\n",""))))
 
-
 def ccw(A,B,C):
     return (C.y-A.y) * (B.x-A.x) > (B.y-A.y) * (C.x-A.x)
 
 def intersect(A,B,C,D):
     return ccw(A,C,D) != ccw(B,C,D) and ccw(A,B,C) != ccw(A,B,D)
 
-
-for i in range(5):
+for i in range(len(a)):
     print("{} - {}".format(a[i].ind,b[i].ind))
+
+end = time. time()
+print("Total time: {}".format(end-start))
