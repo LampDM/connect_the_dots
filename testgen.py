@@ -1,17 +1,20 @@
 import random
 
 f = open("testx.txt", "w")
+num=200
+f.write("{}\n".format(num))
 
-f.write("10000\n")
-uz = 5000
-ov = 5000
 ind = 0
-while uz != 0 and ov != 0:
-    r = random.uniform(-100.0, 100.0)
+for i in range(round(num/2)):
+    rn = random.uniform(-1000.0, -1)
+    rp = random.uniform(1, 1000.0)
     ind += 1
-    if r < 0:
-        uz -= 1
-        f.write("{},{},{}\n".format(ind,r ,random.uniform(-100.0, 100.0)))
+    f.write("{},{},{}\n".format(ind, rn, random.uniform(-1000.0, 1000.0)))
+    ind += 1
+    if ind == num:
+        f.write("{},{},{}".format(ind, rp, random.uniform(-1000.0, 1000.0)))
     else:
-        ov -= 1
-        f.write("{},{},{}\n".format(ind,r ,random.uniform(-100.0, 100.0)))
+        f.write("{},{},{}\n".format(ind, rp, random.uniform(-1000.0, 1000.0)))
+
+
+
