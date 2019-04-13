@@ -2,6 +2,7 @@ import sys
 import time
 from dot_visualisation import *
 import math
+from collections import deque
 
 start = time.time()
 
@@ -55,69 +56,57 @@ filename = sys.argv[1]
 
 f = open(filename, "r")
 
-gen = sorted([ln.split(",") for ln in f][1:], key=lambda e: float(e[2][:-2]))
+gen = ([ln.split(",") for ln in f][1:])
 
-a = []
-b = []
-ac = 0
-
-for ln in gen:
-    flx = float(ln[1])
-    if flx < 0:
-        yval = float(ln[2].replace("\n", ""))
-        a.append(Point(int(ln[0]), flx, yval))
-        ac += 1
-    else:
-        b.append(Point(int(ln[0]), flx, float(ln[2].replace("\n", ""))))
-
-
-# Returns a single list of points
-# or touple of lists
+c = deque(sorted([Point(int(ln[0]), float(ln[1]), float(ln[2].replace("\n", ""))) for ln in gen], key=lambda e: e.y,
+           reverse=True))
 
 def full_graham(cc):
-    ia = cc[:]
+    ia = cc.copy() #remove this
     if len(ia) == 2:
         return ia
-    minp = min(ia, key=lambda e: e.y)
-    ia.remove(minp)
+    minp = ia.pop()
 
     ia = sorted(ia, key=lambda e: degrees_between(minp, e))
-    hull = [minp, ia[0]]
-    links = []
+    hull = deque([minp, ia[0]])
+    links = deque([])
+
+    #Main Graham Loop
     for s in ia[1:]:
         while det(hull[-2], hull[-1], s) <= 0:
             hull.pop()
         hull.append(s)
 
-    # Collect the intersections
+    # Collect the links
     for i in range(len(hull) - 1):
-        if (hull[i].x * hull[i + 1].x) < 0 and (hull[i] not in links) and (hull[i + 1] not in links):
+        if (hull[i].x * hull[i + 1].x) < 0:
             links.append(hull[i])
             links.append(hull[i + 1])
-    if (hull[0].x * hull[-1].x < 0):
+    if hull[0].x * hull[-1].x < 0:
         links.append(hull[0])
         links.append(hull[-1])
-    return links
+    return list(links)
 
 
 rzs = []
 
-c = a + b
 while c:
     ls = full_graham(c)
-
     if len(ls) == 4:
         rzs.append(ls[2:])
         rzs.append(ls[:2])
 
     elif len(ls) == 2:
         rzs.append(ls)
-    c = [el for el in c if el not in ls]
+    # Remove links from c
+    for lnk in ls:
+        c.remove(lnk)
+
 
 end = time.time()
 print("Total time: {}".format(end - start))
+check_rez(rzs)
 
 # Rendering
-plot_rezF(rzs)
-# check_rez(rzs)
-render_plots()
+#plot_rezF(rzs)
+#render_plots()
