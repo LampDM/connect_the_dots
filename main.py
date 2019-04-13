@@ -23,7 +23,10 @@ def intersect(A, B, C, D):
 
 # Get the degrees between two points
 def degrees_between(a, b):
-    return math.degrees(math.atan((b.y - a.y) / (b.x - a.x)))
+    rez = math.degrees(math.atan((b.y - a.y) / (b.x - a.x)))
+    if rez < 0:
+        rez = rez + 180
+    return rez
 
 
 # Check for any conflicts
@@ -36,9 +39,6 @@ def check_rez(rezults):
                 intersect_num += 1
     print("Conflicts: {}".format(intersect_num))
 
-def plot_rez(rezults):
-    for a, b in rezults:
-        store_plots([a.x, b.x], [a.y, b.y])
 
 class Point:
 
@@ -58,21 +58,13 @@ f = open(filename, "r")
 gen = sorted([ln.split(",") for ln in f][1:], key=lambda e: float(e[2][:-2]))
 
 a = []
-ah = set()
 b = []
-bh = set()
 ac = 0
-min_score = float("inf")
-min_ind = 0
-minas = []
+
 for ln in gen:
     flx = float(ln[1])
     if flx < 0:
         yval = float(ln[2].replace("\n", ""))
-        if yval < min_score:
-            min_score = yval
-            min_ind = ac
-
         a.append(Point(int(ln[0]), flx, yval))
         ac += 1
     else:
@@ -81,50 +73,51 @@ for ln in gen:
 
 # Returns a single list of points
 # or touple of lists
-def half_graham(ia, ib):
-    if len(ia) == 1:
-        k = [[ia[0], ib[0]]]
-        return k
+
+def full_graham(cc):
+    ia = cc[:]
+    if len(ia) == 2:
+        return ia
     minp = min(ia, key=lambda e: e.y)
-    maxp = max(ia, key=lambda e: e.y)
-    ib = sorted(ib, key=lambda e: degrees_between(minp, e))
-    ib.append(maxp)
+    ia.remove(minp)
 
-    hull = [minp, ib[0]]
-
-    for s in ib[1:]:
+    ia = sorted(ia, key=lambda e: degrees_between(minp, e))
+    hull = [minp, ia[0]]
+    links = []
+    for s in ia[1:]:
         while det(hull[-2], hull[-1], s) <= 0:
             hull.pop()
         hull.append(s)
-    l1 = hull[:2]
-    l2 = hull[-2:]
-    # ([point,point],[point,point])
-    return [l1, l2]
+
+    # Collect the intersections
+    for i in range(len(hull) - 1):
+        if (hull[i].x * hull[i + 1].x) < 0 and (hull[i] not in links) and (hull[i + 1] not in links):
+            links.append(hull[i])
+            links.append(hull[i + 1])
+    if (hull[0].x * hull[-1].x < 0):
+        links.append(hull[0])
+        links.append(hull[-1])
+    return links
 
 
 rzs = []
-while a:
-    hg = half_graham(a, b)
-    print(len(a))
-    if len(hg) == 2:
-        l1, l2 = hg
-        rzs.append(l1)
-        rzs.append(l2)
-        a.remove(l1[0])
-        a.remove(l2[1])
 
-        b.remove(l1[1])
-        b.remove(l2[0])
-    else:
-        l1 = hg[0]
-        rzs.append(l1)
-        a.remove(l1[0])
+c = a + b
+while c:
+    ls = full_graham(c)
 
-#TODO Implement FULl Graham Scan
+    if len(ls) == 4:
+        rzs.append(ls[2:])
+        rzs.append(ls[:2])
+
+    elif len(ls) == 2:
+        rzs.append(ls)
+    c = [el for el in c if el not in ls]
+
 end = time.time()
 print("Total time: {}".format(end - start))
 
 # Rendering
-plot_rez(rzs)
-check_rez(rzs)
+plot_rezF(rzs)
+# check_rez(rzs)
 render_plots()

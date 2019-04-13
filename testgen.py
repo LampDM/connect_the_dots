@@ -1,7 +1,7 @@
 import random
 
 f = open("testx.txt", "w")
-num=200
+num=2000
 f.write("{}\n".format(num))
 
 ind = 0
