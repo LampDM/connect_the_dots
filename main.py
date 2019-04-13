@@ -65,16 +65,11 @@ c = deque(sorted([Point(int(ln[0]), float(ln[1]), float(ln[2].replace("\n", ""))
 
 
 def full_graham(cc):
-    ia = cc.copy()  # remove this
+    ia = cc
     if len(ia) == 2:
-        return ia
+        return ia.copy()
 
     # Do pruning
-    A = None  # (Ax, Ay) which maximizes x - y
-    B = None  # (Bx, Xy) which maximizes x + y
-    C = None  # (Cx, Cy) which minimizes x - y
-    D = None  # (Dx, Dy) which minimizes x + y
-
     maxA = float("-inf")
     maxB = float("-inf")
     minC = float("inf")
@@ -99,7 +94,7 @@ def full_graham(cc):
     y1 = max(A.y, D.y)
     y2 = min(B.y, C.y)
 
-    ia = [p for p in ia if not (x1 < p.x and p.x < x2 and p.y > y1 and p.y < y2)]
+    ia = [p for p in ia if not (x1 < p.x < x2 and y1 < p.y < y2)]
 
     #Pop the minimum
     minp = ia.pop()
@@ -142,7 +137,7 @@ while c:
 
 end = time.time()
 print("Total time: {}".format(end - start))
-check_rez(rzs)
+#check_rez(rzs)
 
 # Rendering
 #plot_rezF(rzs)
