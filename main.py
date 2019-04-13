@@ -114,9 +114,11 @@ def full_graham(cc):
         if (hull[i].x * hull[i + 1].x) < 0:
             links.append(hull[i])
             links.append(hull[i + 1])
+            #print("{} - {}".format(hull[i].ind,hull[i + 1].ind))
     if hull[0].x * hull[-1].x < 0:
         links.append(hull[0])
         links.append(hull[-1])
+        #print("{} - {}".format(hull[0].ind, hull[-1].ind))
     return list(links)
 
 
@@ -131,9 +133,10 @@ while c:
 
     elif len(ls) == 2:
         rzs.append(ls)
+
     # Remove links from c
-    for lnk in ls:
-        c.remove(lnk)
+    [c.remove(lnk) for lnk in ls]
+
 
 end = time.time()
 print("Total time: {}".format(end - start))
