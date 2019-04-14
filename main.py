@@ -6,7 +6,6 @@ from collections import deque
 
 start = time.time()
 
-
 # Determinant
 def det(p1, p2, p3):
     return (p2.x - p1.x) * (p3.y - p1.y) \
@@ -62,15 +61,14 @@ f = open(filename, "r")
 gen = ([ln.split(",") for ln in f][1:])
 
 c = deque(sorted([Point(int(ln[0]), float(ln[1]), float(ln[2].replace("\n", ""))) for ln in gen],
-                 key=lambda e: e.x + e.y * 10000,
+                 key=lambda e:  (e.y,e.x),
                  reverse=True))
-
 
 def full_graham(cc):
     ia = cc
 
     length = len(ia)
-    # print(length)
+
     if length == 2:
         return ia.copy()
 
@@ -139,10 +137,6 @@ def full_graham(cc):
             links.append(hull[-1])
         # print("{} - {}".format(hull[0].ind, hull[-1].ind))
 
-    # print("Real links!")
-    # for l in links:
-    # print(l)
-    # points_rez(cc)
     return list(links)
 
 
@@ -159,27 +153,13 @@ while c:
     elif len(ls) == 2:
         rzs.append(ls)
     # Remove links from c
-    # [c.remove(lnk) for lnk in ls]
-    # TODO fix removing bug
-    print(len(c))
+    [c.remove(lnk) for lnk in ls]
 
-    if len(c)==30:
-        plot_rezF(rzs)
-        render_plots()
-    if len(c)==26:
-        plot_rezF(rzs)
-        render_plots()
-    #TODO trace conflicts to begining
-    if check_rez(rzs):
-        pass
-
-    for lnk in ls:
-        c.remove(lnk)
 
 end = time.time()
 print("Total time: {}".format(end - start))
 check_rez(rzs)
 
 # Rendering
-plot_rezF(rzs)
-render_plots()
+#plot_rezF(rzs)
+#render_plots()

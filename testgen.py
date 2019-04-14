@@ -1,7 +1,7 @@
 import random
 
 f = open("testx.txt", "w")
-num = 50
+num = 10000
 f.write("{}\n".format(num))
 
 ind = 0
