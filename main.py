@@ -39,6 +39,7 @@ def check_rez(rezults):
             if intersect(rezults[i][0], rezults[i][1], rezults[k][0], rezults[k][1]):
                 intersect_num += 1
     print("Conflicts: {}".format(intersect_num))
+    return intersect_num > 0
 
 
 class Point:
@@ -60,43 +61,49 @@ f = open(filename, "r")
 
 gen = ([ln.split(",") for ln in f][1:])
 
-c = deque(sorted([Point(int(ln[0]), float(ln[1]), float(ln[2].replace("\n", ""))) for ln in gen], key=lambda e: e.y,
+c = deque(sorted([Point(int(ln[0]), float(ln[1]), float(ln[2].replace("\n", ""))) for ln in gen],
+                 key=lambda e: e.x + e.y * 10000,
                  reverse=True))
 
 
 def full_graham(cc):
     ia = cc
-    if len(ia) == 2:
+
+    length = len(ia)
+    # print(length)
+    if length == 2:
         return ia.copy()
 
-    # Do pruning
-    maxA = float("-inf")
-    maxB = float("-inf")
-    minC = float("inf")
-    minD = float("inf")
+    if length > 500:
+        # Do pruning
+        maxA = float("-inf")
+        maxB = float("-inf")
+        minC = float("inf")
+        minD = float("inf")
 
-    for p in ia:
-        if p.ac > maxA:
-            A = p
-            maxA = p.ac
-        if p.bd > maxB:
-            B = p
-            maxB = p.bd
-        if p.ac < minC:
-            C = p
-            minC = p.ac
-        if p.bd < minD:
-            D = p
-            minD = p.bd
+        for p in ia:
+            if p.ac > maxA:
+                A = p
+                maxA = p.ac
+            if p.bd > maxB:
+                B = p
+                maxB = p.bd
+            if p.ac < minC:
+                C = p
+                minC = p.ac
+            if p.bd < minD:
+                D = p
+                minD = p.bd
 
-    x1 = max(C.x, D.x)
-    x2 = min(A.x, B.x)
-    y1 = max(A.y, D.y)
-    y2 = min(B.y, C.y)
+        x1 = max(C.x, D.x)
+        x2 = min(A.x, B.x)
+        y1 = max(A.y, D.y)
+        y2 = min(B.y, C.y)
 
-    ia = [p for p in ia if not (x1 < p.x < x2 and y1 < p.y < y2)]
-
-    #Pop the minimum
+        ia = [p for p in ia if not (x1 < p.x < x2 and y1 < p.y < y2)]
+    else:
+        ia = cc.copy()
+    # Pop the minimum
     minp = ia.pop()
 
     ia = sorted(ia, key=lambda e: degrees_between(minp, e))
@@ -109,39 +116,70 @@ def full_graham(cc):
             hull.pop()
         hull.append(s)
 
-    # Collect the links
+    seenlinks = set()
+    # Collect the links # TODO TEST MORE IF BUG IS FIXED
     for i in range(len(hull) - 1):
         if (hull[i].x * hull[i + 1].x) < 0:
+            if hull[i] in seenlinks:
+                continue
+            if hull[i + 1] in seenlinks:
+                continue
             links.append(hull[i])
+            seenlinks.add(hull[i])
             links.append(hull[i + 1])
-            #print("{} - {}".format(hull[i].ind,hull[i + 1].ind))
+            seenlinks.add(hull[i + 1])
+            # print("{} - {}".format(hull[i].ind,hull[i + 1].ind))
     if hull[0].x * hull[-1].x < 0:
-        links.append(hull[0])
-        links.append(hull[-1])
-        #print("{} - {}".format(hull[0].ind, hull[-1].ind))
+        if hull[0] in seenlinks:
+            pass
+        elif hull[-1] in seenlinks:
+            pass
+        else:
+            links.append(hull[0])
+            links.append(hull[-1])
+        # print("{} - {}".format(hull[0].ind, hull[-1].ind))
+
+    # print("Real links!")
+    # for l in links:
+    # print(l)
+    # points_rez(cc)
     return list(links)
 
 
-rzs = []
+rzs = deque([])
 
-#Main loop
+# Main loop
 while c:
     ls = full_graham(c)
+
     if len(ls) == 4:
         rzs.append(ls[2:])
         rzs.append(ls[:2])
 
     elif len(ls) == 2:
         rzs.append(ls)
-
     # Remove links from c
-    [c.remove(lnk) for lnk in ls]
+    # [c.remove(lnk) for lnk in ls]
+    # TODO fix removing bug
+    print(len(c))
 
+    if len(c)==30:
+        plot_rezF(rzs)
+        render_plots()
+    if len(c)==26:
+        plot_rezF(rzs)
+        render_plots()
+    #TODO trace conflicts to begining
+    if check_rez(rzs):
+        pass
+
+    for lnk in ls:
+        c.remove(lnk)
 
 end = time.time()
 print("Total time: {}".format(end - start))
-#check_rez(rzs)
+check_rez(rzs)
 
 # Rendering
-#plot_rezF(rzs)
-#render_plots()
+plot_rezF(rzs)
+render_plots()
