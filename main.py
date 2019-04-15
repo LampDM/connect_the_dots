@@ -6,6 +6,7 @@ from collections import deque
 
 start = time.time()
 
+
 # Determinant
 def det(p1, p2, p3):
     return (p2.x - p1.x) * (p3.y - p1.y) \
@@ -23,7 +24,10 @@ def intersect(A, B, C, D):
 
 # Get the degrees between two points
 def degrees_between(a, b):
-    rez = math.degrees(math.atan((b.y - a.y) / (b.x - a.x)))
+    subrez = b.x - a.x
+    if subrez == 0:
+        subrez = 0.00000001
+    rez = math.degrees(math.atan((b.y - a.y) / subrez))
     if rez < 0:
         rez = rez + 180
     return rez
@@ -61,8 +65,9 @@ f = open(filename, "r")
 gen = ([ln.split(",") for ln in f][1:])
 
 c = deque(sorted([Point(int(ln[0]), float(ln[1]), float(ln[2].replace("\n", ""))) for ln in gen],
-                 key=lambda e:  (e.y,e.x),
+                 key=lambda e: (e.y, e.x),
                  reverse=True))
+
 
 def full_graham(cc):
     ia = cc
@@ -70,9 +75,12 @@ def full_graham(cc):
     length = len(ia)
 
     if length == 2:
+        print("{} - {}".format(ia[0].ind, ia[1].ind))
         return ia.copy()
 
+    mmX = None
     if length > 500:
+
         # Do pruning
         maxA = float("-inf")
         maxB = float("-inf")
@@ -99,11 +107,18 @@ def full_graham(cc):
         y2 = min(B.y, C.y)
 
         ia = [p for p in ia if not (x1 < p.x < x2 and y1 < p.y < y2)]
+
     else:
         ia = cc.copy()
     # Pop the minimum
     minp = ia.pop()
 
+    if minp.x < 0:
+        mmX = max(ia, key=lambda e: e.x)
+    else:
+        mmX = min(ia, key=lambda e: e.x)
+
+    # TODO optimise like Boris said
     ia = sorted(ia, key=lambda e: degrees_between(minp, e))
     hull = deque([minp, ia[0]])
     links = deque([])
@@ -113,9 +128,14 @@ def full_graham(cc):
         while det(hull[-2], hull[-1], s) <= 0:
             hull.pop()
         hull.append(s)
+        if s == mmX:
+            print(s)
+            print(mmX)
+            break
+
 
     seenlinks = set()
-    # Collect the links # TODO TEST MORE IF BUG IS FIXED
+    # Collect the links
     for i in range(len(hull) - 1):
         if (hull[i].x * hull[i + 1].x) < 0:
             if hull[i] in seenlinks:
@@ -126,7 +146,7 @@ def full_graham(cc):
             seenlinks.add(hull[i])
             links.append(hull[i + 1])
             seenlinks.add(hull[i + 1])
-            # print("{} - {}".format(hull[i].ind,hull[i + 1].ind))
+            print("{} - {}".format(hull[i].ind, hull[i + 1].ind))
     if hull[0].x * hull[-1].x < 0:
         if hull[0] in seenlinks:
             pass
@@ -135,7 +155,7 @@ def full_graham(cc):
         else:
             links.append(hull[0])
             links.append(hull[-1])
-        # print("{} - {}".format(hull[0].ind, hull[-1].ind))
+            print("{} - {}".format(hull[0].ind, hull[-1].ind))
 
     return list(links)
 
@@ -147,19 +167,19 @@ while c:
     ls = full_graham(c)
 
     if len(ls) == 4:
-        rzs.append(ls[2:])
-        rzs.append(ls[:2])
+      rzs.append(ls[2:])
+      rzs.append(ls[:2])
 
     elif len(ls) == 2:
-        rzs.append(ls)
+     rzs.append(ls)
     # Remove links from c
     [c.remove(lnk) for lnk in ls]
 
-
 end = time.time()
+
 print("Total time: {}".format(end - start))
 check_rez(rzs)
 
 # Rendering
-#plot_rezF(rzs)
-#render_plots()
+plot_rezF(rzs)
+render_plots()
