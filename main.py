@@ -1,10 +1,8 @@
 import sys
-import time
-from dot_visualisation import *
+
+# from dot_visualisation import *
 import math
 from collections import deque
-
-start = time.time()
 
 
 # Determinant
@@ -68,6 +66,11 @@ c = deque(sorted([Point(int(ln[0]), float(ln[1]), float(ln[2].replace("\n", ""))
                  key=lambda e: (e.y, e.x),
                  reverse=True))
 
+second = 0
+x1prev = None
+x2prev = None
+y1prev = None
+y2prev = None
 
 def full_graham(cc):
     ia = cc
@@ -78,47 +81,61 @@ def full_graham(cc):
         print("{} - {}".format(ia[0].ind, ia[1].ind))
         return ia.copy()
 
-    mmX = None
     if length > 500:
 
-        # Do pruning
-        maxA = float("-inf")
-        maxB = float("-inf")
-        minC = float("inf")
-        minD = float("inf")
+        global second
+        global x1prev
+        global x2prev
+        global y1prev
+        global y2prev
 
-        for p in ia:
-            if p.ac > maxA:
-                A = p
-                maxA = p.ac
-            if p.bd > maxB:
-                B = p
-                maxB = p.bd
-            if p.ac < minC:
-                C = p
-                minC = p.ac
-            if p.bd < minD:
-                D = p
-                minD = p.bd
+        if not second:
+            # Do pruning
+            maxA = float("-inf")
+            maxB = float("-inf")
+            minC = float("inf")
+            minD = float("inf")
 
-        x1 = max(C.x, D.x)
-        x2 = min(A.x, B.x)
-        y1 = max(A.y, D.y)
-        y2 = min(B.y, C.y)
+            for p in ia:
+                if p.ac > maxA:
+                    A = p
+                    maxA = p.ac
+                if p.bd > maxB:
+                    B = p
+                    maxB = p.bd
+                if p.ac < minC:
+                    C = p
+                    minC = p.ac
+                if p.bd < minD:
+                    D = p
+                    minD = p.bd
+
+            x1 = max(C.x, D.x)
+            x2 = min(A.x, B.x)
+            y1 = max(A.y, D.y)
+            y2 = min(B.y, C.y)
+
+            x1prev=x1
+            x2prev=x2
+            y1prev=y1
+            y2prev=y2
+
+            second = True
+
+        else:
+
+            x1 = x1prev*0.97
+            x2 = x2prev*0.97
+            y1 = y1prev*0.97
+            y2 = y2prev*0.97
+            second = False
 
         ia = [p for p in ia if not (x1 < p.x < x2 and y1 < p.y < y2)]
-
     else:
         ia = cc.copy()
     # Pop the minimum
     minp = ia.pop()
 
-    if minp.x < 0:
-        mmX = max(ia, key=lambda e: e.x)
-    else:
-        mmX = min(ia, key=lambda e: e.x)
-
-    # TODO optimise like Boris said
     ia = sorted(ia, key=lambda e: degrees_between(minp, e))
     hull = deque([minp, ia[0]])
     links = deque([])
@@ -128,11 +145,6 @@ def full_graham(cc):
         while det(hull[-2], hull[-1], s) <= 0:
             hull.pop()
         hull.append(s)
-        if s == mmX:
-            print(s)
-            print(mmX)
-            break
-
 
     seenlinks = set()
     # Collect the links
@@ -167,19 +179,19 @@ while c:
     ls = full_graham(c)
 
     if len(ls) == 4:
-      rzs.append(ls[2:])
-      rzs.append(ls[:2])
+        rzs.append(ls[2:])
+        rzs.append(ls[:2])
 
     elif len(ls) == 2:
-     rzs.append(ls)
+        rzs.append(ls)
     # Remove links from c
     [c.remove(lnk) for lnk in ls]
 
-end = time.time()
+# end = time.time()
 
-print("Total time: {}".format(end - start))
-check_rez(rzs)
+# print("Total time: {}".format(end - start))
+#check_rez(rzs)
 
 # Rendering
-plot_rezF(rzs)
-render_plots()
+# plot_rezF(rzs)
+# render_plots()
