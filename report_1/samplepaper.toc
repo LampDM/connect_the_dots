@@ -1,0 +1,20 @@
+\contentsline {title}{Programming Assignment one report}{1}
+\authcount {3}
+\contentsline {author}{ Jaka Koko\IeC {\v s}ar \and Danijel Mara\IeC {\v z} \and Toni Kocjan }{1}
+\contentsline {section}{\numberline {1}The first seminar}{3}
+\contentsline {subsection}{\numberline {1.1}The vehicle}{5}
+\contentsline {subsection}{\numberline {1.2}Describing ordered chaos}{6}
+\contentsline {subsection}{\numberline {1.3}Color and light}{7}
+\contentsline {subsection}{\numberline {1.4}Addition of greek lines}{8}
+\contentsline {subsection}{\numberline {1.5}Adding variety}{9}
+\contentsline {section}{\numberline {2}The second seminar}{9}
+\contentsline {subsection}{\numberline {2.1}Adding music}{10}
+\contentsline {subsection}{\numberline {2.2}Mouse, explosions and additional settings}{10}
+\contentsline {section}{\numberline {3}The third seminar}{10}
+\contentsline {subsection}{\numberline {3.1}Chosen dataset}{10}
+\contentsline {subsection}{\numberline {3.2}Visualization method}{11}
+\contentsline {subsection}{\numberline {3.3}Filters}{11}
+\contentsline {subsection}{\numberline {3.4}Findings}{11}
+\contentsline {subsection}{\numberline {3.5}Similar research works}{12}
+\contentsline {subsection}{\numberline {3.6}Mind map of the 3rd seminar}{13}
+\contentsline {section}{References}{13}

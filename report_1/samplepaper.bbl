@@ -1,0 +1,28 @@
+\begin{thebibliography}{}
+
+\bibitem [\protect \citeauthoryear {%
+Janko%
+}{%
+Janko%
+}{%
+{\protect \APACyear {2015}}%
+}]{%
+janko2015razvoj}
+\APACinsertmetastar {%
+janko2015razvoj}%
+\begin{APACrefauthors}%
+Janko, V.%
+\end{APACrefauthors}%
+\unskip\
+\newblock
+\APACrefYear{2015}.
+\unskip\
+\newblock
+\APACrefbtitle {Razvoj programa za igranje 1-2-3 {\v{s}}aha} {Razvoj programa
+  za igranje 1-2-3 {\v{s}}aha}\ \APACtypeAddressSchool {\BUPhD}{}{}.
+\unskip\
+\newblock
+\APACaddressSchool {}{Univerza v Ljubljani}.
+\PrintBackRefs{\CurrentBib}
+
+\end{thebibliography}
