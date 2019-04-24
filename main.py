@@ -1,15 +1,12 @@
 import sys
 
-# from dot_visualisation import *
 import math
 from collections import deque
-
 
 # Determinant
 def det(p1, p2, p3):
     return (p2.x - p1.x) * (p3.y - p1.y) \
            - (p2.y - p1.y) * (p3.x - p1.x)
-
 
 # Checking if lines intersect
 def ccw(A, B, C):
@@ -81,7 +78,7 @@ def full_graham(cc):
         print("{} - {}".format(ia[0].ind, ia[1].ind))
         return ia.copy()
 
-    if length > 500:
+    if length > 200:
 
         global second
         global x1prev
@@ -187,11 +184,3 @@ while c:
     # Remove links from c
     [c.remove(lnk) for lnk in ls]
 
-# end = time.time()
-
-# print("Total time: {}".format(end - start))
-#check_rez(rzs)
-
-# Rendering
-# plot_rezF(rzs)
-# render_plots()
